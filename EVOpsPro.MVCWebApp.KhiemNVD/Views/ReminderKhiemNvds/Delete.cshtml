@@ -1,0 +1,47 @@
+@model EVOpsPro.Repositories.KhiemNVD.Models.ReminderKhiemNvd
+
+@{
+    ViewData["Title"] = "Delete Reminder";
+    var filterQuery = ViewBag.FilterQuery as IDictionary<string, string> ?? new Dictionary<string, string>();
+    var filterQueryString = ViewBag.FilterQueryString as string ?? string.Empty;
+}
+
+<section class="card">
+    <div class="card-header">
+        <div>
+            <p class="text-danger mb-1 small">Irreversible action</p>
+            <h1 class="h4 mb-0 text-danger">Delete Reminder</h1>
+        </div>
+    </div>
+
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div class="alert alert-danger">@TempData["ErrorMessage"]</div>
+    }
+
+    <div class="reminder-meta">
+        <div>
+            <span>Reminder type</span>
+            <strong>@Model.ReminderTypeKhiemNvd?.TypeName</strong>
+        </div>
+        <div>
+            <span>Vehicle VIN</span>
+            <strong>@Model.VehicleVin</strong>
+        </div>
+        <div>
+            <span>Due date</span>
+            <strong>@Model.DueDate.ToString("MMM dd, yyyy HH:mm")</strong>
+        </div>
+    </div>
+    <div class="mt-3">
+        <label class="text-muted d-block mb-1">Message</label>
+        <p class="mb-0">@(!string.IsNullOrWhiteSpace(Model.Message) ? Model.Message : "No message provided.")</p>
+    </div>
+</section>
+
+<form asp-action="Delete" method="post" class="form-actions">
+    <input type="hidden" asp-for="ReminderKhiemNvdid" />
+    <partial name="~/Views/Shared/_FilterQueryHiddenFields.cshtml" model="filterQuery" />
+    <a href="@($"{Url.Action("Index")}{filterQueryString}")" class="btn btn-outline">Cancel</a>
+    <button type="submit" class="btn btn-primary text-white" style="background:#dc2626;border:none;">Delete reminder</button>
+</form>

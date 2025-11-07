@@ -1,0 +1,76 @@
+@model EVOpsPro.Repositories.KhiemNVD.Models.ReminderKhiemNvd
+@{
+    var reminderTypes = ViewBag.ReminderTypes as SelectList ?? new SelectList(Enumerable.Empty<SelectListItem>());
+    var userAccounts = ViewBag.UserAccounts as SelectList ?? new SelectList(Enumerable.Empty<SelectListItem>());
+    var vehicleVins = ViewBag.VehicleVins as IEnumerable<SelectListItem> ?? Enumerable.Empty<SelectListItem>();
+}
+
+<div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+<section class="card mb-4">
+    <div class="card-header">
+        <h3 class="h5 mb-0">Recipient &amp; Type</h3>
+    </div>
+    <div class="filter-grid">
+        <div>
+            <label asp-for="UserAccountId">User account</label>
+            <select asp-for="UserAccountId" asp-items="userAccounts">
+                <option value="">-- Select user --</option>
+            </select>
+            <span asp-validation-for="UserAccountId" class="text-danger"></span>
+        </div>
+        <div>
+            <label asp-for="ReminderTypeKhiemNvdid">Reminder type</label>
+            <select asp-for="ReminderTypeKhiemNvdid" asp-items="reminderTypes">
+                <option value="">-- Select reminder type --</option>
+            </select>
+            <span asp-validation-for="ReminderTypeKhiemNvdid" class="text-danger"></span>
+        </div>
+        <div>
+            <label asp-for="VehicleVin">Vehicle VIN</label>
+            <select asp-for="VehicleVin" asp-items="vehicleVins">
+                <option value="">-- Select vehicle --</option>
+            </select>
+            <span asp-validation-for="VehicleVin" class="text-danger"></span>
+        </div>
+    </div>
+</section>
+
+<section class="card mb-4">
+    <div class="card-header">
+        <h3 class="h5 mb-0">Schedule</h3>
+    </div>
+    <div class="filter-grid">
+        <div>
+            <label asp-for="DueDate">Due date</label>
+            <input asp-for="DueDate" type="datetime-local" />
+            <span asp-validation-for="DueDate" class="text-danger"></span>
+        </div>
+        <div>
+            <label asp-for="DueKm">Due km</label>
+            <input asp-for="DueKm" type="number" min="0" />
+            <span asp-validation-for="DueKm" class="text-danger"></span>
+        </div>
+    </div>
+</section>
+
+<section class="card mb-4">
+    <div class="card-header">
+        <h3 class="h5 mb-0">Message &amp; Status</h3>
+    </div>
+    <div class="mb-3">
+        <label asp-for="Message"></label>
+        <textarea asp-for="Message" rows="3" placeholder="Reminder message..."></textarea>
+        <span asp-validation-for="Message" class="text-danger"></span>
+    </div>
+    <div class="d-flex flex-wrap gap-3">
+        <label class="form-check form-switch m-0">
+            <input asp-for="IsSent" class="form-check-input" type="checkbox" />
+            <span class="form-check-label">Has been sent</span>
+        </label>
+        <label class="form-check form-switch m-0">
+            <input asp-for="IsActive" class="form-check-input" type="checkbox" />
+            <span class="form-check-label">Active reminder</span>
+        </label>
+    </div>
+</section>

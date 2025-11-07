@@ -1,0 +1,184 @@
+@model IEnumerable<EVOpsPro.Repositories.KhiemNVD.Models.ReminderKhiemNvd>
+@using X.PagedList
+@using X.PagedList.Mvc.Core
+@using Microsoft.AspNetCore.Mvc.Rendering
+
+@{
+    ViewData["Title"] = "Reminders";
+    var reminders = ViewBag.Reminders as IPagedList<EVOpsPro.Repositories.KhiemNVD.Models.ReminderKhiemNvd>;
+    var searchRequest = ViewBag.SearchRequest as EVOpsPro.Repositories.KhiemNVD.ModelExtensions.ReminderSearchRequest;
+    var reminderTypes = ViewBag.ReminderTypes as SelectList ?? new SelectList(Enumerable.Empty<SelectListItem>());
+    var userAccounts = ViewBag.UserAccounts as SelectList ?? new SelectList(Enumerable.Empty<SelectListItem>());
+    var vehicleVins = ViewBag.VehicleVins as SelectList ?? new SelectList(Enumerable.Empty<SelectListItem>());
+    var filterQuery = ViewBag.FilterQuery as IDictionary<string, string> ?? new Dictionary<string, string>();
+    var filterQueryString = ViewBag.FilterQueryString as string ?? string.Empty;
+    var statusOptions = new List<SelectListItem>
+    {
+        new SelectListItem("All", "", searchRequest?.IsSent == null),
+        new SelectListItem("Pending", "false", searchRequest?.IsSent == false),
+        new SelectListItem("Sent", "true", searchRequest?.IsSent == true)
+    };
+    var activeOptions = new List<SelectListItem>
+    {
+        new SelectListItem("All", "", searchRequest?.IsActive == null),
+        new SelectListItem("Active", "true", searchRequest?.IsActive == true),
+        new SelectListItem("Inactive", "false", searchRequest?.IsActive == false)
+    };
+}
+
+<section class="card">
+    <div class="card-header">
+        <div>
+            <p class="text-muted mb-1 small">Operational inbox</p>
+            <h2 class="h4 mb-0">Reminder Queue</h2>
+        </div>
+        <div class="d-flex gap-2 flex-wrap">
+            <a href="@($"{Url.Action("Create")}{filterQueryString}")" class="btn btn-primary">Create reminder</a>
+            <a asp-controller="ReminderTypeKhiemNvds" asp-action="Index" class="btn btn-outline">Manage types</a>
+        </div>
+    </div>
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div class="alert alert-danger">@TempData["ErrorMessage"]</div>
+    }
+    <form asp-action="Index" method="get">
+        <div class="filter-grid">
+            <div>
+                <label>Keyword</label>
+                <input type="text" name="keyword" value="@searchRequest?.Keyword" placeholder="VIN or message keyword" />
+            </div>
+            <div>
+                <label>User</label>
+                <select name="userAccountId" asp-items="userAccounts">
+                    <option value="">All users</option>
+                </select>
+            </div>
+            <div>
+                <label>Reminder Type</label>
+                <select name="reminderTypeId" asp-items="reminderTypes">
+                    <option value="">All types</option>
+                </select>
+            </div>
+            <div>
+                <label>Vehicle VIN</label>
+                <select name="vehicleVin" asp-items="vehicleVins">
+                    <option value="">All vehicles</option>
+                </select>
+            </div>
+            <div>
+                <label>Status</label>
+                <select name="isSent" asp-items="statusOptions"></select>
+            </div>
+            <div>
+                <label>Active</label>
+                <select name="isActive" asp-items="activeOptions"></select>
+            </div>
+            <div>
+                <label>Due Date From</label>
+                <input type="date" name="dueDateFrom" value="@(searchRequest?.DueDateFrom?.ToString("yyyy-MM-dd"))" />
+            </div>
+            <div>
+                <label>Due Date To</label>
+                <input type="date" name="dueDateTo" value="@(searchRequest?.DueDateTo?.ToString("yyyy-MM-dd"))" />
+            </div>
+            <div class="d-flex align-items-end">
+                <button type="submit" class="btn btn-primary w-100">Apply filters</button>
+            </div>
+        </div>
+    </form>
+</section>
+
+@if (reminders != null && reminders.Any())
+{
+    <section class="reminder-grid">
+        @foreach (var reminder in reminders)
+        {
+            <article class="card reminder-card">
+                <div class="d-flex justify-content-between align-items-start">
+                    <div>
+                        <p class="text-muted small mb-1">@reminder.VehicleVin</p>
+                        <h3>@(reminder.ReminderTypeKhiemNvd?.TypeName ?? "Reminder")</h3>
+                    </div>
+                    <span class="pill @(reminder.IsSent ? "pill-success" : "pill-warning")">
+                        @(reminder.IsSent ? "Sent" : "Pending")
+                    </span>
+                </div>
+                <div class="reminder-meta">
+                    <div>
+                        <span>Due date</span>
+                        <strong>@reminder.DueDate.ToString("MMM dd, yyyy HH:mm")</strong>
+                    </div>
+                    <div>
+                        <span>Due Km</span>
+                        <strong>@(reminder.DueKm?.ToString() ?? "-")</strong>
+                    </div>
+                    <div>
+                        <span>User</span>
+                        <strong>@reminder.UserAccountId</strong>
+                    </div>
+                    <div>
+                        <span>Active</span>
+                        <strong>@(reminder.IsActive ? "Yes" : "No")</strong>
+                    </div>
+                </div>
+                <p class="text-muted mb-0">
+                    @(string.IsNullOrWhiteSpace(reminder.Message)
+                        ? "No message provided."
+                        : reminder.Message.Length > 140 ? reminder.Message.Substring(0, 140) + "…" : reminder.Message)
+                </p>
+                <div class="d-flex flex-wrap gap-2 mt-2">
+                    <a class="btn btn-ghost" href="@($"{Url.Action("Details", new { id = reminder.ReminderKhiemNvdid })}{filterQueryString}")">Details</a>
+                    <a class="btn btn-outline" href="@($"{Url.Action("Edit", new { id = reminder.ReminderKhiemNvdid })}{filterQueryString}")">Edit</a>
+                    <a class="btn btn-outline text-danger" href="@($"{Url.Action("Delete", new { id = reminder.ReminderKhiemNvdid })}{filterQueryString}")">Delete</a>
+                    @if (!reminder.IsSent)
+                    {
+                        <form asp-action="MarkAsSent" method="post" class="d-inline">
+                            <input type="hidden" name="id" value="@reminder.ReminderKhiemNvdid" />
+                            <input type="hidden" name="message" value="@reminder.Message" />
+                            <partial name="~/Views/Shared/_FilterQueryHiddenFields.cshtml" model="filterQuery" />
+                            <button type="submit" class="btn btn-primary">Mark sent</button>
+                            @Html.AntiForgeryToken()
+                        </form>
+                    }
+                </div>
+            </article>
+        }
+    </section>
+}
+else
+{
+    <div class="card empty-state">
+        No reminders match your filters. Try adjusting the criteria or create a new reminder.
+    </div>
+}
+
+@if (ViewBag.Reminders is IPagedList pagedList && pagedList.TotalItemCount > 0)
+{
+    <div class="card text-center">
+        @Html.PagedListPager(
+            pagedList,
+            page => Url.Action("Index", new
+            {
+                userAccountId = searchRequest?.UserAccountId,
+                reminderTypeId = searchRequest?.ReminderTypeId,
+                vehicleVin = searchRequest?.VehicleVin,
+                isSent = searchRequest?.IsSent,
+                isActive = searchRequest?.IsActive,
+                dueDateFrom = searchRequest?.DueDateFrom?.ToString("yyyy-MM-dd"),
+                dueDateTo = searchRequest?.DueDateTo?.ToString("yyyy-MM-dd"),
+                keyword = searchRequest?.Keyword,
+                currentPage = page
+            }),
+            new PagedListRenderOptions
+            {
+                DisplayLinkToFirstPage = PagedListDisplayMode.Always,
+                DisplayLinkToLastPage = PagedListDisplayMode.Always,
+                MaximumPageNumbersToDisplay = 8,
+                ContainerDivClasses = new[] { "pagination justify-content-center mb-0" },
+                UlElementClasses = new[] { "pagination" },
+                LiElementClasses = new[] { "page-item" },
+                ActiveLiElementClass = "active",
+                PageClasses = new[] { "page-link" }
+            })
+    </div>
+}

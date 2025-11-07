@@ -1,0 +1,50 @@
+@model EVOpsPro.Repositories.KhiemNVD.Models.ReminderKhiemNvd
+
+@{
+    ViewData["Title"] = "Reminder Details";
+    var filterQuery = ViewBag.FilterQuery as IDictionary<string, string> ?? new Dictionary<string, string>();
+    var filterQueryString = ViewBag.FilterQueryString as string ?? string.Empty;
+}
+
+<section class="card">
+    <div class="card-header">
+        <div>
+            <p class="text-muted mb-1 small">Reminder details</p>
+            <h1 class="h4 mb-0">@Model.ReminderTypeKhiemNvd?.TypeName</h1>
+        </div>
+        <span class="pill @(Model.IsSent ? "pill-success" : "pill-warning")">
+            @(Model.IsSent ? "Sent" : "Pending")
+        </span>
+    </div>
+    <div class="reminder-meta">
+        <div>
+            <span>Vehicle VIN</span>
+            <strong>@Model.VehicleVin</strong>
+        </div>
+        <div>
+            <span>User account</span>
+            <strong>@Model.UserAccountId</strong>
+        </div>
+        <div>
+            <span>Due date</span>
+            <strong>@Model.DueDate.ToString("MMM dd, yyyy HH:mm")</strong>
+        </div>
+        <div>
+            <span>Due km</span>
+            <strong>@(Model.DueKm?.ToString() ?? "-")</strong>
+        </div>
+        <div>
+            <span>Active</span>
+            <strong>@(Model.IsActive ? "Yes" : "No")</strong>
+        </div>
+    </div>
+    <div class="mt-3">
+        <label class="text-muted d-block mb-1">Message</label>
+        <p class="mb-0">@(!string.IsNullOrWhiteSpace(Model.Message) ? Model.Message : "No message provided.")</p>
+    </div>
+</section>
+
+<div class="form-actions">
+    <a href="@($"{Url.Action("Index")}{filterQueryString}")" class="btn btn-outline">Back to reminders</a>
+    <a href="@($"{Url.Action("Edit", new { id = Model.ReminderKhiemNvdid })}{filterQueryString}")" class="btn btn-primary">Edit reminder</a>
+</div>
