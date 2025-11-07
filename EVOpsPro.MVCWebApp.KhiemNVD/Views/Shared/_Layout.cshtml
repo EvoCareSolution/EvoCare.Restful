@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - EVOpsPro</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/EVOpsPro.MVCWebApp.KhiemNVD.styles.css" asp-append-version="true" />
+</head>
+<body class="app-body">
+    @{
+        var userDisplay = User?.Identity?.IsAuthenticated == true ? User.Identity!.Name : "Guest";
+        string IsActive(string controller) => string.Equals(ViewContext.RouteData.Values["controller"]?.ToString(), controller, StringComparison.OrdinalIgnoreCase) ? "active-link" : string.Empty;
+    }
+    <div class="app-shell">
+        <header class="app-nav">
+            <div class="brand">
+                <img src="~/images/logo.png" alt="EvoCare logo" />
+                EVOpsPro
+            </div>
+            <nav>
+                <a class="@IsActive("Home")" asp-controller="Home" asp-action="Index">Home</a>
+                <a class="@IsActive("ReminderKhiemNvds")" asp-controller="ReminderKhiemNvds" asp-action="Index">ReminderKhiemNvds</a>
+                <a class="@IsActive("ReminderTypeKhiemNvds")" asp-controller="ReminderTypeKhiemNvds" asp-action="Index">ReminderTypeKhiemNvds</a>
+                <a class="@IsActive("Home")" asp-controller="Home" asp-action="Privacy">Privacy</a>
+            </nav>
+            <div class="app-user d-flex align-items-center gap-2">
+                <span>@userDisplay</span>
+                @if (User?.Identity?.IsAuthenticated == true)
+                {
+                    <form asp-controller="Account" asp-action="Logout" method="post" class="d-inline">
+                        <button type="submit" class="btn btn-outline btn-sm">Logout</button>
+                        @Html.AntiForgeryToken()
+                    </form>
+                }
+            </div>
+        </header>
+
+        <main class="app-main container-xxl">
+            @RenderBody()
+        </main>
+
+        <footer class="app-footer">
+            &copy; @DateTime.UtcNow.Year - EVOpsPro.MVCWebApp.KhiemNVD. All rights reserved.
+        </footer>
+    </div>
+
+    <div class="toast-region" id="toastRegion"></div>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

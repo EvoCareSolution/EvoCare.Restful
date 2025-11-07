@@ -1,0 +1,14 @@
+@model IDictionary<string, string>
+
+@if (Model != null)
+{
+    foreach (var entry in Model)
+    {
+        if (string.IsNullOrWhiteSpace(entry.Value))
+        {
+            continue;
+        }
+
+        <input type="hidden" name="@entry.Key" value="@entry.Value" />
+    }
+}
