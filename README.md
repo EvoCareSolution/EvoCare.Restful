@@ -17,7 +17,25 @@ Xây dựng một hệ thống quản lý bảo dưỡng toàn diện cho các t
 - ⚙️ **Quản trị viên (Admin)**
 
 ---
+## 📷 Giao Diện Chính
 
+### Reminder Module
+![Reminder Home](docs/screen/Reminder_Home.png)
+![Reminder Info](docs/screen/Reminder_Info.png)
+![Reminder Edit](docs/screen/Reminder_Edit.png)
+![Reminder Delete](docs/screen/Reminder_Delete.png)
+
+### Reminder Type Module
+![Reminder Type Home](docs/screen/ReminderType_Home.png)
+![Reminder Type Info](docs/screen/ReminderType_Info.png)
+![Reminder Type Create](docs/screen/ReminderType_Crate.png)
+![Reminder Type Edit](docs/screen/ReminderType_Edit.png)
+![Reminder Type Delete](docs/screen/ReminderType_Delete.png)
+
+### Authentication
+![Login](docs/screen/login.png)
+
+---
 ## ✨ Tính Năng Chính
 
 ### 1️⃣ Chức Năng Cho Khách Hàng (Customer)
