@@ -1,0 +1,15 @@
+[
+  {
+    "Name": "EVoCare.RESTfull",
+    "Projects": [
+      {
+        "Path": "EVOpsPro.WebAPI.KhiemNVD\\EVOpsPro.WebAPI.KhiemNVD.csproj",
+        "Action": "Start"
+      },
+      {
+        "Path": "EVOpsPro.MVCWebApp.KhiemNVD\\EVOpsPro.MVCWebApp.KhiemNVD.csproj",
+        "Action": "Start"
+      }
+    ]
+  }
+]
